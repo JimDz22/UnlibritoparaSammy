@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Una propuesta para Sammy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  min-height:100vh;
+  background: linear-gradient(rgba(0,0,0,64%), rgba(0,0,0,64%)), 
+              url("lirio.jpeg") center/cover no-repeat fixed;
+  font-family:'Playfair Display', serif;
+  overflow:hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  transition: opacity 1s ease;
+}
+
+.start-btn {
+  padding: 20px 50px;
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: white;
+  background: #c37ca2; /* Un tono un poco más rosado para la propuesta */
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(195, 124, 162, 0.5);
+  transition: transform 0.3s, background 0.3s;
+}
+
+.btn-continuacion {
+  margin-top: 25px;
+  padding: 15px 35px;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background: #c37ca2;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.snowflake {
+  position: absolute;
+  background-color: #ffffff;
+  border-radius: 50%;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 1000;
+  filter: blur(1px);
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-150px) translateX(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translateY(110vh) translateX(50px) rotate(360deg); opacity: 0; }
+}
+
+.scene{
+  perspective: 2500px;
+  width: 100%;
+  height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.book{
+  width: 800px;
+  height: 550px;
+  position: relative;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sheet{
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  right: 0;
+  transform-origin: left center;
+  transition: transform 1.5s cubic-bezier(.645, .045, .355, 1);
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+.face{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  backface-visibility: hidden;
+  background: #ffffff;
+  background-image: radial-gradient(circle at left, rgba(0,0,0,0.04) 0%, transparent 15%);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.face.back{
+  transform: rotateY(180deg);
+  background-image: radial-gradient(circle at right, rgba(0,0,0,0.04) 0%, transparent 15%);
+}
+
+.sheet.flip{ transform: rotateY(-180deg); }
+
+h1{ font-size: 2.2em; color: #1a1a1a; margin-bottom: 20px; text-shadow: 2px 2px 5px rgba(195, 124, 162, 0.4); }
+p{ font-size: 1.2em; line-height: 1.6; color: #333; max-width: 90%; }
+.illustration{ width: 160px; margin: 15px 0; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+
+.arrow{
+  position: absolute;
+  bottom: 30px;
+  font-size: 38px;
+  color: #333;
+  cursor: pointer;
+  z-index: 500;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#prev{ left: 20px; display: none; }
+#next{ right: 20px; }
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <button class="start-btn" onclick="startApp()">Para Sammy, con amor 📖</button>
+</div>
+
+<audio id="bgMusic" src="https://raw.githubusercontent.com/fabidz13/Canciones/main/Ben%20E.%20King%20%20Stand%20By%20Me.mp3" preload="auto" loop></audio>
+<audio id="flipSound" src="page.mp3" preload="auto"></audio>
+
+<div class="scene" id="mainScene">
+  <div class="book">
+
+    <div class="sheet" id="s1">
+      <div class="face" style="background-image: url('portada.jpg'); background-size: cover;">
+        <h1 style="background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;">Sammy Rizitos</h1>
+        <p style="background: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px; font-weight: bold;">Hay algo que mi corazón<br>necesita contarte...</p>
+      </div>
+      <div class="face back">
+        <img class="illustration" src="puccaygaru.gif" alt="PuccayGaru">
+        <p>A veces, las palabras sobran cuando las miradas lo dicen todo.</p>
+      </div>
+    </div>
+
+    <div class="sheet" id="s2">
+      <div class="face">
+        <p>¿Te has dado cuenta?<br>Cada risa compartida y cada momento juntos se siente como un capítulo que no quiero que termine.</p>
+      </div>
+      <div class="face back">
+        <p><em>"Eres esa melodía que quiero escuchar en bucle todos los días."</em></p>
+      </div>
+    </div>
+
+    <div class="sheet" id="s3">
+      <div class="face">
+        <img class="illustration" src="pucca.gif" alt="Pucca">
+        <p>Como Pucca, yo no tengo miedo de demostrarte que por ti iría hasta el fin del mundo.<br>Tu felicidad es mi misión favorita.</p>
+      </div>
+      <div class="face back">
+        <p><em>"No busco a alguien que me complete, te busco a ti para compartir mi mundo."</em></p>
+      </div>
+    </div>
+
+    <div class="sheet" id="s4">
+      <div class="face">
+        <img class="illustration" src="garu.gif" alt="Garu">
+        <p>Incluso en mis silencios, estoy pensando en cómo cuidarte y hacerte sentir la mujer más especial.<br>Estar contigo es sentirme en casa.</p>
+      </div>
+      <div class="face back">
+        <p><em>"Hay un lugar especial reservado solo para ti en mi futuro."</em></p>
+      </div>
+    </div>
+
+    <div class="sheet" id="s5">
+      <div class="face">
+        <img class="illustration" src="pochaccoenamorado.gif" alt="pochaccoenamorado">
+        <p>Pochacco sabe que lo mejor de un paseo no es el destino, sino con quién vas de la mano.<br>Y yo quiero que siempre sea de la tuya.</p>
+      </div>
+      <div class="face back">
+        <img class="illustration" src="pochaccojugueton.gif" alt="pochaccojugueton">
+        <p>Me encantas por cómo eres, por tus rizitos y por la magia que traes a mi vida.</p>
+      </div>
+    </div>
+
+    <div class="sheet" id="s6">
+      <div class="face">
+        <p><em>"He estado guardando este sentimiento, esperando el momento perfecto para decirte que mi mundo es mejor desde que estás en él."</em></p>
+      </div>
+      <div class="face back">
+        <p><em>"No quiero ser solo un capítulo en tu historia... quiero ser el autor que la escriba contigo a partir de hoy."</em></p>
+      </div>
+    </div>
+
+    <div class="sheet" id="s7">
+      <div class="face">
+        <h1>Sammy...</h1>
+        <p>Tengo una pregunta muy importante que hacerte...</p>
+        <p style="margin-top:15px; font-weight: bold;">¿Estás lista para dar el siguiente paso?</p>
+        
+        <button class="btn-continuacion" onclick="irAContinuacion()">Continuación</button>
+      </div>
+      <div class="face back"></div>
+    </div>
+
+    <div class="arrow" id="prev">‹</div>
+    <div class="arrow" id="next">›</div>
+
+  </div>
+</div>
+
+<script>
+function irAContinuacion() {
+  // Aquí es donde ocurre la magia. Puedes poner un alert o redirigir.
+  alert("❤️ Fabian dice: Sammy, ¿te gustaría ser mi novia? ❤️");
+}
+
+function startApp() {
+  const overlay = document.getElementById('overlay');
+  const scene = document.getElementById('mainScene');
+  const music = document.getElementById('bgMusic');
+
+  overlay.style.opacity = '0';
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    scene.style.display = 'flex';
+    music.play().catch(e => console.log("Audio play prevented"));
+  }, 1000);
+}
+
+function createSnowflake() {
+  const snowflake = document.createElement('div');
+  snowflake.classList.add('snowflake');
+  snowflake.style.left = Math.random() * 100 + 'vw';
+  const size = Math.random() * 6 + 4 + 'px';
+  snowflake.style.width = size;
+  snowflake.style.height = size;
+  snowflake.style.animationDuration = Math.random() * 4 + 6 + 's';
+  snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+  document.body.appendChild(snowflake);
+  setTimeout(() => snowflake.remove(), 10000);
+}
+setInterval(createSnowflake, 800);
+
+const sheets = [...document.querySelectorAll(".sheet")];
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const sound = document.getElementById("flipSound");
+
+let current = 0;
+const totalSheets = sheets.length;
+
+function updateZIndex() {
+  sheets.forEach((sheet, index) => {
+    if (index < current) {
+      sheet.style.zIndex = index + 1;
+    } else {
+      sheet.style.zIndex = totalSheets - index;
+    }
+  });
+}
+
+updateZIndex();
+
+nextBtn.onclick = () => {
+  if (current < totalSheets - 1) {
+    sheets[current].classList.add("flip");
+    current++;
+    updateZIndex();
+    if(sound.src) sound.play().catch(()=>{});
+    prevBtn.style.display = "flex";
+    if (current === totalSheets - 1) nextBtn.style.display = "none";
+  }
+};
+
+prevBtn.onclick = () => {
+  if (current > 0) {
+    current--;
+    sheets[current].classList.remove("flip");
+    updateZIndex();
+    if(sound.src) sound.play().catch(()=>{});
+    nextBtn.style.display = "flex";
+    if (current === 0) prevBtn.style.display = "none";
+  }
+};
+</script>
+
+</body>
+</html>
